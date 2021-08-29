@@ -24,5 +24,5 @@ export class Quote {
 
   @OneToOne(() => User, (user) => user.id)
   @JoinColumn()
-  user: User;
+  user_id: User;
 }
