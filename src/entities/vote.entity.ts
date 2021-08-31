@@ -4,8 +4,8 @@ import { User } from './user.entity';
 
 @Entity()
 export class Vote {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   status: string;
@@ -15,5 +15,4 @@ export class Vote {
 
   @ManyToOne(() => Quote, (quote) => quote.id)
   quote_id: Quote;
-
 }

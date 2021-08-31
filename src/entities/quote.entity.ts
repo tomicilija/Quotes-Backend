@@ -11,7 +11,7 @@ import { User } from './user.entity';
 @Entity()
 export class Quote {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column({ unique: true })
   email: string;
