@@ -11,7 +11,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     AuthModule,
     UserModule,
     QuoteModule,
-    TypeOrmModule.forRoot({ // Database connection
+    // Database connection
+    TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
       port: 5432,
