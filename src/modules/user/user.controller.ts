@@ -7,12 +7,15 @@ import {
   Delete,
   Patch,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from 'src/entities/user.entity';
 import { CreateUserDto } from '../auth/dto/createUser.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
+@UseGuards(AuthGuard('jwt'))
 export class UserController {
   // Controller declares a dependency on the UserService token with constructor
   constructor(private userService: UserService) {}
