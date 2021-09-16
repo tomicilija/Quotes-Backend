@@ -7,7 +7,6 @@ import { CreateUserDto } from '../auth/dto/createUser.dto';
 // Injectable decorator declares the UserService class
 @Injectable()
 export class UserService {
-  private users = [];
   // Constructor based dependency injection used to inject instances (often service providers) into classes.
   constructor(
     @InjectRepository(UserRepository)

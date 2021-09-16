@@ -5,12 +5,16 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { QuoteModule } from './modules/quote/quote.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
+import { Quote } from './entities/quote.entity';
+import { Vote } from './entities/vote.entity';
 
 @Module({
   imports: [
     AuthModule,
     UserModule,
     QuoteModule,
+    TypeOrmModule.forFeature([User, Quote, Vote]),
     // Database connection
     TypeOrmModule.forRoot({
       type: 'postgres',

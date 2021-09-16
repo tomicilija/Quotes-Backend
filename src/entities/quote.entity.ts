@@ -4,9 +4,11 @@ import {
   JoinColumn,
   OneToOne,
   Column,
+  OneToMany,
 } from 'typeorm';
 
 import { User } from './user.entity';
+import { Vote } from './vote.entity';
 
 // Database - Quotes table has one to one connection with user
 //  (one user can only have one quote and quote belongs to only on user)
@@ -15,9 +17,6 @@ import { User } from './user.entity';
 export class Quote {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ unique: true })
-  email: string;
 
   @Column()
   text: string;
@@ -28,7 +27,10 @@ export class Quote {
   @Column({ type: 'timestamptz' }) // Date_time with timezone
   creation_date: Date;
 
-  @OneToOne(() => User, (user) => user.id)
-  @JoinColumn()
+  @OneToOne(() => User, (user) => user.id, { cascade: true })
+  @JoinColumn({ name: 'user_id' })
   user_id: User;
+
+  @OneToMany(() => Vote, (vote) => vote.id)
+  votes: Vote[];
 }

@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  OneToMany,
+} from 'typeorm';
+import { Quote } from './quote.entity';
+import { Vote } from './vote.entity';
 
 // Database - Users table
 
@@ -18,4 +26,10 @@ export class User {
 
   @Column()
   surname: string;
+
+  @OneToOne(() => Quote, (quote) => quote.user_id)
+  quote: Quote;
+
+  @OneToMany(() => Vote, (vote) => vote.user_id)
+  votes: Vote[];
 }
