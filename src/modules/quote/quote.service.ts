@@ -13,9 +13,9 @@ export class QuoteService {
     private quoteRepoitory: QuoteRepository,
   ) {}
 
-  // Gets quote with this specific id
-  async getUserById(id: string): Promise<Quote> {
-    return this.quoteRepoitory.getQuoteById(id);
+  // Gets quote
+  async getQuote(user_id: User): Promise<Quote> {
+    return this.quoteRepoitory.getQuote(user_id);
   }
 
   // Creates quote with qute text, karma = 0 and creation date and time of now
@@ -24,5 +24,15 @@ export class QuoteService {
     user_id: User,
   ): Promise<void> {
     return this.quoteRepoitory.createQuote(createQuoteDto, user_id);
+  }
+
+  // Delete quote with id
+  async deleteQuote(user_id: User): Promise<void> {
+    this.quoteRepoitory.deleteQuote(user_id);
+  }
+
+  // Updates quote
+  updateQuote(createQuoteDto: CreateQuoteDto, user_id: User): Promise<void> {
+    return this.quoteRepoitory.updateQuote(createQuoteDto, user_id);
   }
 }

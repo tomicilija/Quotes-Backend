@@ -13,11 +13,11 @@ import * as bcrypt from 'bcrypt';
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
   // Gets all of the users information with this specific id
-  async getUserById(id: string): Promise<User> {
-    const found = await this.findOne(id);
+  async getUserById(user_id: User): Promise<User> {
+    const found = await this.findOne(user_id);
 
     if (!found) {
-      throw new NotFoundException(`User wth ID: "${id}" not found`);
+      throw new NotFoundException(`User wth ID: "${user_id.id}" not found`);
     }
 
     return found;
@@ -64,16 +64,20 @@ export class UserRepository extends Repository<User> {
   }
 
   // Delete user with id
-  async deleteUser(id: string): Promise<void> {
-    const result = await this.delete(id);
+  async deleteUser(user_id: User): Promise<void> {
+    // const user = await this.getUserById(id);
+    // await this.quotesRepository.deleteQuote(user);
+    await this.query('DELETE FROM quote WHERE user_id = $1', [user_id.id]);
+    const result = await this.delete(user_id);
+
     if (result.affected == 0) {
-      throw new NotFoundException(`User with ID: "${id}" not fund`);
+      throw new NotFoundException(`User with ID: "${user_id.id}" not fund`);
     }
   }
 
   // Updates all user information with taht id and all info in body (email, pass, name and surname)
-  async updateUser(id: string, createUserDto: CreateUserDto): Promise<User> {
-    const user = await this.getUserById(id);
+  async updateUser(user_id: User, createUserDto: CreateUserDto): Promise<User> {
+    const user = await this.getUserById(user_id);
 
     //Hash
     const salt = await bcrypt.genSalt();

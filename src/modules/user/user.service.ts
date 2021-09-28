@@ -14,18 +14,18 @@ export class UserService {
   ) {}
 
   // Gets all of the users information with this specific id
-  async getUserById(id: string): Promise<User> {
-    return this.userRepoitory.getUserById(id);
+  async getUserById(user_id: User): Promise<User> {
+    return this.userRepoitory.getUserById(user_id);
   }
 
   // Delete user with id
-  async deleteUser(id: string): Promise<void> {
-    this.userRepoitory.delete(id);
+  async deleteUser(user_id: User): Promise<void> {
+    this.userRepoitory.deleteUser(user_id);
   }
 
   // Updates all user information with taht id and all info in body (email, pass, name and surname)
-  updateUser(id: string, createUserDto: CreateUserDto): Promise<User> {
-    return this.userRepoitory.updateUser(id, createUserDto);
+  updateUser(user_id: User, createUserDto: CreateUserDto): Promise<User> {
+    return this.userRepoitory.updateUser(user_id, createUserDto);
   }
 
   /* Doesn't work

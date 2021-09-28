@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Quote } from 'src/entities/quote.entity';
 import { User } from 'src/entities/user.entity';
@@ -12,10 +20,10 @@ export class QuoteController {
   // Controller declares a dependency on the UserService token with constructor
   constructor(private quoteService: QuoteService) {}
 
-  // Gets all of the users information with this specific id
-  @Get('/:id')
-  getUserById(@Param('id') id: string): Promise<Quote> {
-    return this.quoteService.getUserById(id);
+  // Gets users quote
+  @Get()
+  getQuote(@GetUser() user_id: User): Promise<Quote> {
+    return this.quoteService.getQuote(user_id);
   }
 
   // Creates quote with qute text, karma = 0 and creation date and time of now
@@ -25,5 +33,20 @@ export class QuoteController {
     @GetUser() user_id: User,
   ): Promise<void> {
     return this.quoteService.createQuote(createQuoteDto, user_id);
+  }
+
+  // Delete quote with id
+  @Delete()
+  deleteQuote(@GetUser() user_id: User): Promise<void> {
+    return this.quoteService.deleteQuote(user_id);
+  }
+
+  // Updates users quote
+  @Patch()
+  updateUser(
+    @Body() createQuoteDto: CreateQuoteDto,
+    @GetUser() user_id: User,
+  ): Promise<void> {
+    return this.quoteService.updateQuote(createQuoteDto, user_id);
   }
 }
