@@ -1,4 +1,10 @@
-import { Entity, ManyToOne, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  ManyToOne,
+  Column,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+} from 'typeorm';
 import { Quote } from './quote.entity';
 import { User } from './user.entity';
 
@@ -13,9 +19,11 @@ export class Vote {
   @Column()
   status: string;
 
-  @ManyToOne(() => User, (user) => user.id)
-  user_id: User;
+  @ManyToOne(() => User, (user) => user.id, { cascade: true })
+  @JoinColumn({ name: 'user_id' })
+  user_id: string;
 
-  @ManyToOne(() => Quote, (quote) => quote.id)
-  quote_id: Quote;
+  @ManyToOne(() => Quote, (quote) => quote.id, { cascade: true })
+  @JoinColumn({ name: 'quote_id' })
+  quote_id: string;
 }

@@ -59,4 +59,16 @@ export class QuoteRepository extends Repository<Quote> {
       (quote.creation_date = datetime),
       await this.save(quote);
   }
+
+  // Updates quote with qute text, karma = 0 and creation date and time of now
+  async updateQuoteKarma(status: number, user_id: string): Promise<void> {
+    const quote = await this.findOne({ where: { user_id: user_id } });
+
+    if (!quote) {
+      throw new NotFoundException(`Quote not found`);
+    }
+
+    quote.karma = quote.karma + status;
+    await this.save(quote);
+  }
 }
