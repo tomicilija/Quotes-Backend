@@ -65,8 +65,7 @@ export class UserRepository extends Repository<User> {
 
   // Delete user with id
   async deleteUser(user_id: User): Promise<void> {
-    // const user = await this.getUserById(id);
-    // await this.quotesRepository.deleteQuote(user);
+    await this.query('DELETE FROM vote WHERE user_id = $1', [user_id.id]);
     await this.query('DELETE FROM quote WHERE user_id = $1', [user_id.id]);
     const result = await this.delete(user_id);
 

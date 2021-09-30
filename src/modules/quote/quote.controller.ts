@@ -7,6 +7,8 @@ import {
   Patch,
   Post,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Quote } from 'src/entities/quote.entity';
@@ -31,6 +33,7 @@ export class QuoteController {
   // Creates quote with qute text, karma = 0 and creation date and time of now
   @UseGuards(AuthGuard())
   @Post('myquote')
+  @UsePipes(ValidationPipe)
   createQuote(
     @Body() createQuoteDto: CreateQuoteDto,
     @GetUser() user_id: User,
