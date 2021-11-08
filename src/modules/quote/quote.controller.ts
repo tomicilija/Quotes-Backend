@@ -11,9 +11,9 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Quote } from 'src/entities/quote.entity';
-import { User } from 'src/entities/user.entity';
-import { Vote } from 'src/entities/vote.entity';
+import { Quote } from '../../entities/quote.entity';
+import { User } from '../../entities/user.entity';
+import { Vote } from '../../entities/vote.entity';
 import { GetUser } from '../auth/get-user.decorator';
 import { CreateQuoteDto } from './dto/createQuote.dto';
 import { QuoteService } from './quote.service';
@@ -90,7 +90,7 @@ export class QuoteController {
 
   // Delete downvite quote
   @UseGuards(AuthGuard())
-  @Delete('/user/:id/upvote')
+  @Delete('/user/:id/downvote')
   deleteDownvoteQuote(
     @Param('id') quotes_user_id: string,
     @GetUser() user_id: User,

@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
-import { Quote } from 'src/entities/quote.entity';
-import { User } from 'src/entities/user.entity';
+import { Quote } from '../../entities/quote.entity';
+import { User } from '../../entities/user.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { CreateQuoteDto } from './dto/createQuote.dto';
 

@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
-import { User } from 'src/entities/user.entity';
-import { Vote } from 'src/entities/vote.entity';
+import { User } from '../../entities/user.entity';
+import { Vote } from '../../entities/vote.entity';
 import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(Vote)
