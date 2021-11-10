@@ -11,16 +11,17 @@ import { LoginUserDto } from '../../src/modules/auth/dto/loginUser.dto';
 
 describe('UsersController (e2e)', () => {
   let app: INestApplication;
+  let mod: TestingModule;
   let jwt: string;
   let initialUserData: User;
 
   // before we run tests we add user to database
   beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
+    mod = await Test.createTestingModule({
       imports: [AppModule, AuthModule],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
+    app = mod.createNestApplication();
     await app.init();
 
     // DB interaction

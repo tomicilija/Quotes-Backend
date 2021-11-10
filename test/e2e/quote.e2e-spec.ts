@@ -7,26 +7,23 @@ import { QuoteModule } from '../../src/modules/quote/quote.module';
 import { Quote } from '../../src/entities/quote.entity';
 import { AppModule } from '../../src/app.module';
 import { CreateQuoteDto } from '../../src/modules/quote/dto/createQuote.dto';
-import { AuthModule } from '../../src/modules/auth/auth.module';
 import { User } from '../../src/entities/user.entity';
 import { CreateUserDto } from '../../src/modules/auth/dto/createUser.dto';
 import { LoginUserDto } from '../../src/modules/auth/dto/loginUser.dto';
-import { Vote } from 'src/entities/vote.entity';
-
-///------ PROBLEM VRSTNI RED TESTOV ZGLEDA DA NI TAK KO JE NAPISAN AMPAK JE RANDOM
 
 describe('UsersController (e2e)', () => {
   let app: INestApplication;
+  let mod: TestingModule;
   let jwt: string;
   let initialQuoteData: Quote;
   let initialUserData: User;
 
   // before we run tests we add user to database
   beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
+    mod = await Test.createTestingModule({
       imports: [AppModule, QuoteModule],
     }).compile();
-    app = moduleFixture.createNestApplication();
+    app = mod.createNestApplication();
     await app.init();
 
     // DB interaction
