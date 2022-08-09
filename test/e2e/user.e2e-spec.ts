@@ -48,7 +48,6 @@ describe('UsersController (e2e)', () => {
       getConnection().entityMetadatas.forEach((x) =>
         entities.push({ name: x.name, tableName: x.tableName }),
       );
-      [];
       for (const entity of entities) {
         const repository = getRepository(entity.name);
         await repository.query(`TRUNCATE TABLE "${entity.tableName}" cascade;`);

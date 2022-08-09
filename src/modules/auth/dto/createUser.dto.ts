@@ -21,6 +21,9 @@ export class CreateUserDto {
   pass: string;
 
   @IsNotEmpty()
+  passConfirm: string;
+
+  @IsNotEmpty()
   name: string;
 
   @IsNotEmpty()

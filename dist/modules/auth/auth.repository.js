@@ -18,24 +18,29 @@ let AuthRepository = class AuthRepository extends typeorm_1.Repository {
         this.jwtService = jwt_1.JwtService;
     }
     async signUp(createUserDto) {
-        const { email, pass, name, surname } = createUserDto;
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(pass, salt);
-        const user = this.create({
-            email,
-            pass: hashedPassword,
-            name,
-            surname,
-        });
-        try {
-            await this.save(user);
+        const { email, pass, passConfirm, name, surname } = createUserDto;
+        if (pass !== passConfirm) {
+            throw new common_1.ConflictException('Passwords do not match');
         }
-        catch (error) {
-            if (error.code === '23505') {
-                throw new common_1.ConflictException('User is already registerd with that email!');
+        else {
+            const salt = await bcrypt.genSalt();
+            const hashedPassword = await bcrypt.hash(pass, salt);
+            const user = this.create({
+                email,
+                pass: hashedPassword,
+                name,
+                surname,
+            });
+            try {
+                await this.save(user);
             }
-            else {
-                throw new common_1.InternalServerErrorException();
+            catch (error) {
+                if (error.code === '23505') {
+                    throw new common_1.ConflictException('User is already registerd with that email!');
+                }
+                else {
+                    throw new common_1.InternalServerErrorException();
+                }
             }
         }
     }
