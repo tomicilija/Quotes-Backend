@@ -2,10 +2,11 @@ import { User } from '../../entities/user.entity';
 import { Vote } from '../../entities/vote.entity';
 import { Repository } from 'typeorm';
 export declare class VoteRepository extends Repository<Vote> {
-    upvoteQuote(quotes_user_id: string, user_id: User): Promise<void>;
-    downvoteQuote(quotes_user_id: string, user_id: User): Promise<void>;
-    deleteVote(quotes_user_id: string, user_id: User): Promise<void>;
+    voteStatusCheck(user_id: string, user: User): Promise<string>;
+    upvoteQuote(user_id: string, user: User): Promise<void>;
+    downvoteQuote(user_id: string, user: User): Promise<void>;
+    deleteVote(user_id: string, user: User): Promise<void>;
     getUserVotes(user_id: string): Promise<Vote>;
-    getLikesList(user_id: User): Promise<Vote>;
-    getQuotesList(): Promise<Vote>;
+    getLikesList(): Promise<Vote>;
+    getRecentQuotes(): Promise<Vote>;
 }

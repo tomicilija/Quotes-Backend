@@ -26,35 +26,41 @@ let QuoteController = class QuoteController {
     getQuote(user_id) {
         return this.quoteService.getQuote(user_id);
     }
-    createQuote(createQuoteDto, user_id) {
-        return this.quoteService.createQuote(createQuoteDto, user_id);
+    getUsersQuote(user_id) {
+        return this.quoteService.getUsersQuote(user_id);
     }
-    deleteQuote(user_id) {
-        return this.quoteService.deleteQuote(user_id);
+    createQuote(createQuoteDto, user) {
+        return this.quoteService.createQuote(createQuoteDto, user);
     }
-    updateQuote(createQuoteDto, user_id) {
-        return this.quoteService.updateQuote(createQuoteDto, user_id);
+    deleteQuote(user) {
+        return this.quoteService.deleteQuote(user);
     }
-    upvoteQuote(quotes_user_id, user_id) {
-        return this.quoteService.upvoteQuote(quotes_user_id, user_id);
+    updateQuote(createQuoteDto, user) {
+        return this.quoteService.updateQuote(createQuoteDto, user);
     }
-    downvoteQuote(quotes_user_id, user_id) {
-        return this.quoteService.downvoteQuote(quotes_user_id, user_id);
+    voteStatusCheck(user_id, user) {
+        return this.quoteService.voteStatusCheck(user_id, user);
     }
-    deleteUpvoteQuote(quotes_user_id, user_id) {
-        return this.quoteService.deleteUpvoteQuote(quotes_user_id, user_id);
+    upvoteQuote(user_id, user) {
+        return this.quoteService.upvoteQuote(user_id, user);
     }
-    deleteDownvoteQuote(quotes_user_id, user_id) {
-        return this.quoteService.deleteDownvoteQuote(quotes_user_id, user_id);
+    downvoteQuote(user_id, user) {
+        return this.quoteService.downvoteQuote(user_id, user);
+    }
+    deleteUpvoteQuote(user_id, user) {
+        return this.quoteService.deleteUpvoteQuote(user_id, user);
+    }
+    deleteDownvoteQuote(user_id, user) {
+        return this.quoteService.deleteDownvoteQuote(user_id, user);
     }
     getUserVotes(user_id) {
         return this.quoteService.getUserVotes(user_id);
     }
-    getLikesList(user_id) {
-        return this.quoteService.getLikesList(user_id);
+    getLikesList() {
+        return this.quoteService.getLikesList();
     }
-    getQuotesList() {
-        return this.quoteService.getQuotesList();
+    getRecentQuotes() {
+        return this.quoteService.getRecentQuotes();
     }
 };
 __decorate([
@@ -65,6 +71,13 @@ __decorate([
     __metadata("design:paramtypes", [user_entity_1.User]),
     __metadata("design:returntype", Promise)
 ], QuoteController.prototype, "getQuote", null);
+__decorate([
+    (0, common_1.Get)('/quote/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], QuoteController.prototype, "getUsersQuote", null);
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
     (0, common_1.Post)('myquote'),
@@ -94,6 +107,15 @@ __decorate([
         user_entity_1.User]),
     __metadata("design:returntype", Promise)
 ], QuoteController.prototype, "updateQuote", null);
+__decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
+    (0, common_1.Get)('/user/:id/vote'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, get_user_decorator_1.GetUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, user_entity_1.User]),
+    __metadata("design:returntype", Promise)
+], QuoteController.prototype, "voteStatusCheck", null);
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
     (0, common_1.Post)('/user/:id/upvote'),
@@ -139,19 +161,17 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], QuoteController.prototype, "getUserVotes", null);
 __decorate([
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
     (0, common_1.Get)('/likes'),
-    __param(0, (0, get_user_decorator_1.GetUser)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_entity_1.User]),
-    __metadata("design:returntype", Promise)
-], QuoteController.prototype, "getLikesList", null);
-__decorate([
-    (0, common_1.Get)('/list'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], QuoteController.prototype, "getQuotesList", null);
+], QuoteController.prototype, "getLikesList", null);
+__decorate([
+    (0, common_1.Get)('/recent'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], QuoteController.prototype, "getRecentQuotes", null);
 QuoteController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [quote_service_1.QuoteService])

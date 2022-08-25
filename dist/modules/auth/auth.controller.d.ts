@@ -6,6 +6,6 @@ export declare class AuthController {
     constructor(authrService: AuthService);
     signUp(createUserDto: CreateUserDto): Promise<void>;
     signIn(loginUserDto: LoginUserDto): Promise<{
-        accesToken: string;
+        accessToken: string;
     }>;
 }

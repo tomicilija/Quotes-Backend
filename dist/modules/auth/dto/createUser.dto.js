@@ -22,7 +22,7 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.MinLength)(8),
     (0, class_validator_1.Matches)(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-        message: 'Password is too weak (Must contain: at least 1 upper case letter, least 1 lower case letter, 1 number or special character)',
+        message: 'Password is too weak (Must contain: at least 1 upper case letter, least 1 lower case letter, 1 number or special character)\n',
     }),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "pass", void 0);

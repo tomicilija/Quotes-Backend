@@ -16,7 +16,7 @@ export class CreateUserDto {
   // Passwords will contain at least 1 number or special character
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
     message:
-      'Password is too weak (Must contain: at least 1 upper case letter, least 1 lower case letter, 1 number or special character)',
+      'Password is too weak (Must contain: at least 1 upper case letter, least 1 lower case letter, 1 number or special character)\n',
   })
   pass: string;
 
@@ -28,4 +28,6 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   surname: string;
+
+  // TODO add profile picture
 }

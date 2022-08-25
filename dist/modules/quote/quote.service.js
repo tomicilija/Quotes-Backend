@@ -25,6 +25,9 @@ let QuoteService = class QuoteService {
     async getQuote(user_id) {
         return this.quoteRepository.getQuote(user_id);
     }
+    async getUsersQuote(user_id) {
+        return this.quoteRepository.getUsersQuote(user_id);
+    }
     async createQuote(createQuoteDto, user_id) {
         return this.quoteRepository.createQuote(createQuoteDto, user_id);
     }
@@ -34,21 +37,28 @@ let QuoteService = class QuoteService {
     updateQuote(createQuoteDto, user_id) {
         return this.quoteRepository.updateQuote(createQuoteDto, user_id);
     }
-    async upvoteQuote(quotes_user_id, user_id) {
-        this.voteRepository.upvoteQuote(quotes_user_id, user_id);
-        this.updateQuoteKarma(1, quotes_user_id);
+    async voteStatusCheck(user_id, user) {
+        return this.voteRepository.voteStatusCheck(user_id, user);
     }
-    async downvoteQuote(quotes_user_id, user_id) {
-        this.voteRepository.downvoteQuote(quotes_user_id, user_id);
-        this.updateQuoteKarma(-1, quotes_user_id);
+    async upvoteQuote(user_id, user) {
+        return this.voteRepository.upvoteQuote(user_id, user).then(() => {
+            this.updateQuoteKarma(1, user_id);
+        });
     }
-    async deleteUpvoteQuote(quotes_user_id, user_id) {
-        this.voteRepository.deleteVote(quotes_user_id, user_id);
-        this.updateQuoteKarma(-1, quotes_user_id);
+    async downvoteQuote(user_id, user) {
+        return this.voteRepository.downvoteQuote(user_id, user).then(() => {
+            this.updateQuoteKarma(-1, user_id);
+        });
     }
-    async deleteDownvoteQuote(quotes_user_id, user_id) {
-        this.voteRepository.deleteVote(quotes_user_id, user_id);
-        this.updateQuoteKarma(1, quotes_user_id);
+    async deleteUpvoteQuote(user_id, user) {
+        return this.voteRepository.deleteVote(user_id, user).then(() => {
+            this.updateQuoteKarma(-1, user_id);
+        });
+    }
+    async deleteDownvoteQuote(user_id, user) {
+        return this.voteRepository.deleteVote(user_id, user).then(() => {
+            this.updateQuoteKarma(1, user_id);
+        });
     }
     updateQuoteKarma(status, user_id) {
         return this.quoteRepository.updateQuoteKarma(status, user_id);
@@ -56,11 +66,11 @@ let QuoteService = class QuoteService {
     async getUserVotes(user_id) {
         return this.voteRepository.getUserVotes(user_id);
     }
-    async getLikesList(user_id) {
-        return this.voteRepository.getLikesList(user_id);
+    async getLikesList() {
+        return this.voteRepository.getLikesList();
     }
-    async getQuotesList() {
-        return this.voteRepository.getQuotesList();
+    async getRecentQuotes() {
+        return this.voteRepository.getRecentQuotes();
     }
 };
 QuoteService = __decorate([

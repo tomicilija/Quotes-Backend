@@ -1,5 +1,5 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { NotFoundException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { User } from '../../entities/user.entity';
 import { CreateUserDto } from '../auth/dto/createUser.dto';
 import * as bcrypt from 'bcrypt';
@@ -30,31 +30,28 @@ export class UserRepository extends Repository<User> {
 
   // Updates all user information with taht id and all info in body (email, pass, name and surname)
   async updateUser(user_id: User, createUserDto: CreateUserDto): Promise<User> {
+    const { email, pass, passConfirm, name, surname } = createUserDto;
     const user = await this.getUserById(user_id);
 
-    //Hash
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(createUserDto.pass, salt);
+    //Do passwords match?
+    if (pass !== passConfirm) {
+      throw new ConflictException('Passwords do not match');
+    } else {
+      //Hash
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(createUserDto.pass, salt);
 
-    user.email = createUserDto.email;
-    user.pass = hashedPassword;
-    user.name = createUserDto.name;
-    user.surname = createUserDto.surname;
+      // TODO - add password confirm and compare to password
 
-    await this.save(user);
+      // TODO - check if email is already in use - not sure if needed
 
+      user.email = email;
+      user.pass = hashedPassword;
+      user.name = name;
+      user.surname = surname;
+
+      await this.save(user);
+    }
     return user;
   }
-
-  /* Doesn't work
-  async getUsers(filterDto: GetUsersFilterDto): Promise<User[]> {
-    const { search } = filterDto;
-    const query = this.createQueryBuilder('user');
-    if (search) {
-      query.andWhere('user.email LIKE search', { search: `%${search}%` });
-    }
-    const users = await query.getMany();
-    return users;
-  }
-  */
 }

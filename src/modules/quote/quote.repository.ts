@@ -6,8 +6,19 @@ import { CreateQuoteDto } from './dto/createQuote.dto';
 
 @EntityRepository(Quote)
 export class QuoteRepository extends Repository<Quote> {
-  // Gets quote
+  // Gets my quote
   async getQuote(user_id: User): Promise<Quote> {
+    const found = await this.findOne({ where: { user_id: user_id } });
+
+    if (!found) {
+      throw new NotFoundException(`Quote not found`);
+    }
+
+    return found;
+  }
+
+  // Gets users quote
+  async getUsersQuote(user_id: string): Promise<Quote> {
     const found = await this.findOne({ where: { user_id: user_id } });
 
     if (!found) {
@@ -34,9 +45,21 @@ export class QuoteRepository extends Repository<Quote> {
     //console.log(quote);
   }
 
+  // Delete vote quote with
+  async deleteVote(quote_id: string): Promise<void> {
+    const vote = await this.query('DELETE FROM vote WHERE quote_id = $1', [
+      quote_id,
+    ]);
+    if (vote.affected == 0) {
+      throw new NotFoundException(`Vote not fund`);
+    }
+  }
+
   // Delete quote with id
   async deleteQuote(user_id: User): Promise<void> {
     const quote = await this.getQuote(user_id);
+    /// TODO Also delete all votes on quote with user_id
+    this.deleteVote(quote.id);
     const result = await this.delete(quote);
     if (result.affected == 0) {
       throw new NotFoundException(`Quote not fund`);
@@ -48,6 +71,7 @@ export class QuoteRepository extends Repository<Quote> {
     createQuoteDto: CreateQuoteDto,
     user_id: User,
   ): Promise<void> {
+    /// TODO Also delete all votes on quote with user_id
     const quote = await this.getQuote(user_id);
 
     if (!quote) {

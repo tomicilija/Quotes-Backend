@@ -31,8 +31,8 @@ let AuthService = class AuthService {
         const user = await this.authRepository.findOne({ email });
         if (user && (await bcrypt.compare(pass, user.pass))) {
             const payload = { email };
-            const accesToken = await this.jwtService.sign(payload);
-            return { accesToken };
+            const accessToken = await this.jwtService.sign(payload);
+            return { accessToken };
         }
         else {
             throw new common_1.UnauthorizedException('Please check your login creentials');

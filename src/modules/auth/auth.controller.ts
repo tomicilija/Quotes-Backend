@@ -24,7 +24,7 @@ export class AuthController {
   // Signs in user with email, pass, name and surname
   @Post('/login')
   @UsePipes(ValidationPipe)
-  signIn(@Body() loginUserDto: LoginUserDto): Promise<{ accesToken: string }> {
+  signIn(@Body() loginUserDto: LoginUserDto): Promise<{ accessToken: string }> {
     return this.authrService.signIn(loginUserDto);
   }
 }

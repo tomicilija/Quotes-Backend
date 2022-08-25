@@ -11,58 +11,80 @@ const common_1 = require("@nestjs/common");
 const vote_entity_1 = require("../../entities/vote.entity");
 const typeorm_1 = require("typeorm");
 let VoteRepository = class VoteRepository extends typeorm_1.Repository {
-    async upvoteQuote(quotes_user_id, user_id) {
-        const user = user_id.id;
+    async voteStatusCheck(user_id, user) {
+        let status = 'NEUTRAL';
         const quote = await this.query('SELECT id FROM quote WHERE user_id = $1', [
-            quotes_user_id,
+            user_id,
         ]);
-        const statusU = 'UPVOTE';
-        const vote = this.create({
-            status: statusU,
-            user_id: user,
-            quote_id: quote[0].id,
-        });
-        await this.save(vote);
+        const upVote = await this.query("SELECT id FROM vote WHERE status ='UPVOTE' AND user_id = $1 AND quote_id = $2", [user.id, quote[0].id]);
+        const downVote = await this.query("SELECT id FROM vote WHERE status ='DOWNVOTE' AND user_id = $1 AND quote_id = $2", [user.id, quote[0].id]);
+        if (upVote.length > 0) {
+            status = 'UPVOTE';
+        }
+        else if (downVote.length > 0) {
+            status = 'DOWNVOTE';
+        }
+        return status;
     }
-    async downvoteQuote(quotes_user_id, user_id) {
-        const user = user_id.id;
+    async upvoteQuote(user_id, user) {
         const quote = await this.query('SELECT id FROM quote WHERE user_id = $1', [
-            quotes_user_id,
+            user_id,
         ]);
-        const statusU = 'DOWNVOTE';
-        const vote = this.create({
-            status: statusU,
-            user_id: user,
-            quote_id: quote[0].id,
-        });
-        await this.save(vote);
+        const vote = await this.query("SELECT id FROM vote WHERE status ='UPVOTE' AND user_id = $1 AND quote_id = $2", [user.id, quote[0].id]);
+        if (vote.length < 1) {
+            const upVote = this.create({
+                status: 'UPVOTE',
+                user_id: user.id,
+                quote_id: quote[0].id,
+            });
+            await this.save(upVote);
+        }
+        else {
+            throw new common_1.ConflictException('You cannot upvote one quote twice!');
+        }
     }
-    async deleteVote(quotes_user_id, user_id) {
-        const user = user_id.id;
+    async downvoteQuote(user_id, user) {
         const quote = await this.query('SELECT id FROM quote WHERE user_id = $1', [
-            quotes_user_id,
+            user_id,
         ]);
-        const vote = await this.query('DELETE FROM vote WHERE user_id = $1 AND quote_id = $2', [user, quote[0].id]);
-        if (vote.affected == 0) {
+        const vote = await this.query("SELECT id FROM vote WHERE status ='DOWNVOTE' AND user_id = $1 AND quote_id = $2", [user.id, quote[0].id]);
+        if (vote.length < 1) {
+            const downVote = this.create({
+                status: 'DOWNVOTE',
+                user_id: user.id,
+                quote_id: quote[0].id,
+            });
+            await this.save(downVote);
+        }
+        else {
+            throw new common_1.ConflictException('You cannot downvote one quote twice!');
+        }
+    }
+    async deleteVote(user_id, user) {
+        const quote = await this.query('SELECT id FROM quote WHERE user_id = $1', [
+            user_id,
+        ]);
+        const vote = await this.query('DELETE FROM vote WHERE user_id = $1 AND quote_id = $2', [user.id, quote[0].id]);
+        if (vote[1] < 1) {
             throw new common_1.NotFoundException(`Vote not fund`);
         }
     }
     async getUserVotes(user_id) {
-        const found = await this.query('SELECT u.email, q.karma FROM public."user" u INNER JOIN public."quote" q ON q.user_id = u.Id WHERE u.id = $1 ', [user_id]);
+        const found = await this.query("SELECT u.id AS userid, q.karma, q.text, u.name, u.surname FROM public.vote v INNER JOIN public.quote q ON v.quote_id = q.Id INNER JOIN public.user u ON q.user_id = u.Id WHERE v.user_id = $1 AND v.status = 'UPVOTE' ORDER BY q.karma DESC", [user_id]);
         if (!found) {
             throw new common_1.NotFoundException(`Vote not found`);
         }
         return found;
     }
-    async getLikesList(user_id) {
-        const found = await this.query("SELECT u.email, q.text, q.karma FROM public.vote v INNER JOIN public.quote q ON v.quote_id = q.Id INNER JOIN public.user u ON q.user_id = u.Id WHERE v.user_id = $1 AND v.status = 'UPVOTE' ORDER BY q.karma DESC", [user_id.id]);
+    async getLikesList() {
+        const found = await this.query('SELECT u.id AS userid, q.text, q.karma, u.name, u.surname FROM public."user" u INNER JOIN public."quote" q ON q.user_id = u.Id ORDER BY q.karma DESC');
         if (!found) {
             throw new common_1.NotFoundException(`Votes not found`);
         }
         return found;
     }
-    async getQuotesList() {
-        const found = await this.query('SELECT u.email, q.text, q.karma FROM public."user" u INNER JOIN public."quote" q ON q.user_id = u.Id ORDER BY q.karma DESC');
+    async getRecentQuotes() {
+        const found = await this.query('SELECT u.id AS userid, q.text, q.karma, u.name, u.surname FROM public."user" u INNER JOIN public."quote" q ON q.user_id = u.Id ORDER BY q.creation_date DESC');
         if (!found) {
             throw new common_1.NotFoundException(`Vote not found`);
         }

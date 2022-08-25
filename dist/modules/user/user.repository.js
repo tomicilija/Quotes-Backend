@@ -28,14 +28,20 @@ let UserRepository = class UserRepository extends typeorm_1.Repository {
         }
     }
     async updateUser(user_id, createUserDto) {
+        const { email, pass, passConfirm, name, surname } = createUserDto;
         const user = await this.getUserById(user_id);
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(createUserDto.pass, salt);
-        user.email = createUserDto.email;
-        user.pass = hashedPassword;
-        user.name = createUserDto.name;
-        user.surname = createUserDto.surname;
-        await this.save(user);
+        if (pass !== passConfirm) {
+            throw new common_1.ConflictException('Passwords do not match');
+        }
+        else {
+            const salt = await bcrypt.genSalt();
+            const hashedPassword = await bcrypt.hash(createUserDto.pass, salt);
+            user.email = email;
+            user.pass = hashedPassword;
+            user.name = name;
+            user.surname = surname;
+            await this.save(user);
+        }
         return user;
     }
 };

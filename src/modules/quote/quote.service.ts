@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Quote } from '../../entities/quote.entity';
 import { User } from '../../entities/user.entity';
@@ -17,9 +22,14 @@ export class QuoteService {
     private voteRepository: VoteRepository,
   ) {}
 
-  // Gets quote
+  // Gets my quote
   async getQuote(user_id: User): Promise<Quote> {
     return this.quoteRepository.getQuote(user_id);
+  }
+
+  // Gets users quote
+  async getUsersQuote(user_id: string): Promise<Quote> {
+    return this.quoteRepository.getUsersQuote(user_id);
   }
 
   // Creates quote with qute text, karma = 0 and creation date and time of now
@@ -40,34 +50,37 @@ export class QuoteService {
     return this.quoteRepository.updateQuote(createQuoteDto, user_id);
   }
 
+  // Gets users vote status of the quote
+  async voteStatusCheck(user_id: string, user: User): Promise<string> {
+    return this.voteRepository.voteStatusCheck(user_id, user);
+  }
+
   // Creates upvote on quote
-  async upvoteQuote(quotes_user_id: string, user_id: User): Promise<void> {
-    this.voteRepository.upvoteQuote(quotes_user_id, user_id);
-    this.updateQuoteKarma(1, quotes_user_id);
+  async upvoteQuote(user_id: string, user: User): Promise<void> {
+    return this.voteRepository.upvoteQuote(user_id, user).then(() => {
+      this.updateQuoteKarma(1, user_id);
+    });
   }
 
   // Creates downvote on quote
-  async downvoteQuote(quotes_user_id: string, user_id: User): Promise<void> {
-    this.voteRepository.downvoteQuote(quotes_user_id, user_id);
-    this.updateQuoteKarma(-1, quotes_user_id);
+  async downvoteQuote(user_id: string, user: User): Promise<void> {
+    return this.voteRepository.downvoteQuote(user_id, user).then(() => {
+      this.updateQuoteKarma(-1, user_id);
+    });
   }
 
   // Deletes upvote on quote
-  async deleteUpvoteQuote(
-    quotes_user_id: string,
-    user_id: User,
-  ): Promise<void> {
-    this.voteRepository.deleteVote(quotes_user_id, user_id);
-    this.updateQuoteKarma(-1, quotes_user_id);
+  async deleteUpvoteQuote(user_id: string, user: User): Promise<void> {
+    return this.voteRepository.deleteVote(user_id, user).then(() => {
+      this.updateQuoteKarma(-1, user_id);
+    });
   }
 
   // Deletes downvote on quote
-  async deleteDownvoteQuote(
-    quotes_user_id: string,
-    user_id: User,
-  ): Promise<void> {
-    this.voteRepository.deleteVote(quotes_user_id, user_id);
-    this.updateQuoteKarma(1, quotes_user_id);
+  async deleteDownvoteQuote(user_id: string, user: User): Promise<void> {
+    return this.voteRepository.deleteVote(user_id, user).then(() => {
+      this.updateQuoteKarma(1, user_id);
+    });
   }
 
   // Updates karma
@@ -79,14 +92,14 @@ export class QuoteService {
   async getUserVotes(user_id: string): Promise<Vote> {
     return this.voteRepository.getUserVotes(user_id);
   }
-  
+
   // Gets all liked quotes by user descending by karma
-  async getLikesList(user_id: User): Promise<Vote> {
-    return this.voteRepository.getLikesList(user_id);
+  async getLikesList(): Promise<Vote> {
+    return this.voteRepository.getLikesList();
   }
 
   // Gets all quotes and users descending by karma
-  async getQuotesList(): Promise<Vote> {
-    return this.voteRepository.getQuotesList();
+  async getRecentQuotes(): Promise<Vote> {
+    return this.voteRepository.getRecentQuotes();
   }
 }

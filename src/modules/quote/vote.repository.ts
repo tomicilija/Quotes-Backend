@@ -1,53 +1,88 @@
-import { NotFoundException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { User } from '../../entities/user.entity';
 import { Vote } from '../../entities/vote.entity';
 import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(Vote)
 export class VoteRepository extends Repository<Vote> {
-  // Creates upvote on quote
-  async upvoteQuote(quotes_user_id: string, user_id: User): Promise<void> {
-    const user = user_id.id;
+  // Gets users votes
+  async voteStatusCheck(user_id: string, user: User): Promise<string> {
+    let status = 'NEUTRAL';
     const quote = await this.query('SELECT id FROM quote WHERE user_id = $1', [
-      quotes_user_id,
+      user_id,
     ]);
-    const statusU = 'UPVOTE';
-    const vote = this.create({
-      status: statusU,
-      user_id: user,
-      quote_id: quote[0].id,
-    });
-    await this.save(vote);
-    //console.log(vote);
+    const upVote = await this.query(
+      "SELECT id FROM vote WHERE status ='UPVOTE' AND user_id = $1 AND quote_id = $2",
+      [user.id, quote[0].id],
+    );
+    const downVote = await this.query(
+      "SELECT id FROM vote WHERE status ='DOWNVOTE' AND user_id = $1 AND quote_id = $2",
+      [user.id, quote[0].id],
+    );
+
+    if (upVote.length > 0) {
+      status = 'UPVOTE';
+    } else if (downVote.length > 0) {
+      status = 'DOWNVOTE';
+    }
+
+    return status;
   }
 
   // Creates upvote on quote
-  async downvoteQuote(quotes_user_id: string, user_id: User): Promise<void> {
-    const user = user_id.id;
+  async upvoteQuote(user_id: string, user: User): Promise<void> {
     const quote = await this.query('SELECT id FROM quote WHERE user_id = $1', [
-      quotes_user_id,
+      user_id,
     ]);
-    const statusU = 'DOWNVOTE';
-    const vote = this.create({
-      status: statusU,
-      user_id: user,
-      quote_id: quote[0].id,
-    });
-    await this.save(vote);
-    //console.log(vote);
+    const vote = await this.query(
+      "SELECT id FROM vote WHERE status ='UPVOTE' AND user_id = $1 AND quote_id = $2",
+      [user.id, quote[0].id],
+    );
+    if (vote.length < 1) {
+      const upVote = this.create({
+        status: 'UPVOTE',
+        user_id: user.id,
+        quote_id: quote[0].id,
+      });
+      await this.save(upVote);
+      //return true;
+    } else {
+      throw new ConflictException('You cannot upvote one quote twice!');
+      //return false;
+    }
   }
 
-  // Delete downvote quote with
-  async deleteVote(quotes_user_id: string, user_id: User): Promise<void> {
-    const user = user_id.id;
+  // Creates upvote on quote
+  async downvoteQuote(user_id: string, user: User): Promise<void> {
     const quote = await this.query('SELECT id FROM quote WHERE user_id = $1', [
-      quotes_user_id,
+      user_id,
+    ]);
+    const vote = await this.query(
+      "SELECT id FROM vote WHERE status ='DOWNVOTE' AND user_id = $1 AND quote_id = $2",
+      [user.id, quote[0].id],
+    );
+    if (vote.length < 1) {
+      const downVote = this.create({
+        status: 'DOWNVOTE',
+        user_id: user.id,
+        quote_id: quote[0].id,
+      });
+      await this.save(downVote);
+    } else {
+      throw new ConflictException('You cannot downvote one quote twice!');
+    }
+  }
+
+  // Delete vote quote with
+  async deleteVote(user_id: string, user: User): Promise<void> {
+    const quote = await this.query('SELECT id FROM quote WHERE user_id = $1', [
+      user_id,
     ]);
     const vote = await this.query(
       'DELETE FROM vote WHERE user_id = $1 AND quote_id = $2',
-      [user, quote[0].id],
+      [user.id, quote[0].id],
     );
-    if (vote.affected == 0) {
+    if (vote[1] < 1) {
       throw new NotFoundException(`Vote not fund`);
     }
   }
@@ -55,8 +90,10 @@ export class VoteRepository extends Repository<Vote> {
   // Gets users votes
   async getUserVotes(user_id: string): Promise<Vote> {
     const found = await this.query(
-      'SELECT u.email, q.karma FROM public."user" u INNER JOIN public."quote" q ON q.user_id = u.Id WHERE u.id = $1 ',
+      "SELECT u.id AS userid, q.karma, q.text, u.name, u.surname FROM public.vote v INNER JOIN public.quote q ON v.quote_id = q.Id INNER JOIN public.user u ON q.user_id = u.Id WHERE v.user_id = $1 AND v.status = 'UPVOTE' ORDER BY q.karma DESC",
       [user_id],
+      /*'SELECT u.id, u.email, u.name, u.surname, q.text, q.karma FROM public."user" u INNER JOIN public."quote" q ON q.user_id = u.Id WHERE u.id = $1 ',
+      [user_id],*/
     );
 
     if (!found) {
@@ -67,10 +104,9 @@ export class VoteRepository extends Repository<Vote> {
   }
 
   // Gets all liked quotes by user descending by karma
-  async getLikesList(user_id: User): Promise<Vote> {
+  async getLikesList(): Promise<Vote> {
     const found = await this.query(
-      "SELECT u.email, q.text, q.karma FROM public.vote v INNER JOIN public.quote q ON v.quote_id = q.Id INNER JOIN public.user u ON q.user_id = u.Id WHERE v.user_id = $1 AND v.status = 'UPVOTE' ORDER BY q.karma DESC",
-      [user_id.id],
+      'SELECT u.id AS userid, q.text, q.karma, u.name, u.surname FROM public."user" u INNER JOIN public."quote" q ON q.user_id = u.Id ORDER BY q.karma DESC',
     );
 
     if (!found) {
@@ -81,9 +117,9 @@ export class VoteRepository extends Repository<Vote> {
   }
 
   // Gets quote
-  async getQuotesList(): Promise<Vote> {
+  async getRecentQuotes(): Promise<Vote> {
     const found = await this.query(
-      'SELECT u.email, q.text, q.karma FROM public."user" u INNER JOIN public."quote" q ON q.user_id = u.Id ORDER BY q.karma DESC',
+      'SELECT u.id AS userid, q.text, q.karma, u.name, u.surname FROM public."user" u INNER JOIN public."quote" q ON q.user_id = u.Id ORDER BY q.creation_date DESC',
     );
 
     if (!found) {

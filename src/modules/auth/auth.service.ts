@@ -21,15 +21,15 @@ export class AuthService {
   }
 
   // Signs in user with email and pass
-  async signIn(loginUserDto: LoginUserDto): Promise<{ accesToken: string }> {
+  async signIn(loginUserDto: LoginUserDto): Promise<{ accessToken: string }> {
     const { email, pass } = loginUserDto;
     const user = await this.authRepository.findOne({ email });
 
     //checks if there is user found and if password matches with one in database
     if (user && (await bcrypt.compare(pass, user.pass))) {
       const payload: JwtPayload = { email };
-      const accesToken: string = await this.jwtService.sign(payload);
-      return { accesToken };
+      const accessToken: string = await this.jwtService.sign(payload);
+      return { accessToken };
     } else {
       throw new UnauthorizedException('Please check your login creentials');
     }

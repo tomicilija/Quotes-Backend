@@ -18,6 +18,13 @@ let QuoteRepository = class QuoteRepository extends typeorm_1.Repository {
         }
         return found;
     }
+    async getUsersQuote(user_id) {
+        const found = await this.findOne({ where: { user_id: user_id } });
+        if (!found) {
+            throw new common_1.NotFoundException(`Quote not found`);
+        }
+        return found;
+    }
     async createQuote(createQuoteDto, user_id) {
         const { text } = createQuoteDto;
         const datetime = new Date();
@@ -29,8 +36,17 @@ let QuoteRepository = class QuoteRepository extends typeorm_1.Repository {
         });
         await this.save(quote);
     }
+    async deleteVote(quote_id) {
+        const vote = await this.query('DELETE FROM vote WHERE quote_id = $1', [
+            quote_id,
+        ]);
+        if (vote.affected == 0) {
+            throw new common_1.NotFoundException(`Vote not fund`);
+        }
+    }
     async deleteQuote(user_id) {
         const quote = await this.getQuote(user_id);
+        this.deleteVote(quote.id);
         const result = await this.delete(quote);
         if (result.affected == 0) {
             throw new common_1.NotFoundException(`Quote not fund`);

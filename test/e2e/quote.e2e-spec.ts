@@ -93,11 +93,11 @@ describe('UsersController (e2e)', () => {
       .send(dto)
       .expect(201)
       .then((res) => {
-        jwt = res.body.accesToken;
+        jwt = res.body.accessToken;
         expect(res.body).toEqual({
-          accesToken: expect.any(String),
+          accessToken: expect.any(String),
         });
-        jwt = res.body.accesToken;
+        jwt = res.body.accessToken;
         //console.log(jwt);
       });
   });
