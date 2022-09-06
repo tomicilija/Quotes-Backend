@@ -45,10 +45,8 @@ export class VoteRepository extends Repository<Vote> {
         quote_id: quote[0].id,
       });
       await this.save(upVote);
-      //return true;
     } else {
       throw new ConflictException('You cannot upvote one quote twice!');
-      //return false;
     }
   }
 

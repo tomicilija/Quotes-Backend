@@ -16,14 +16,13 @@ export class AuthRepository extends Repository<User> {
   async signUp(createUserDto: CreateUserDto): Promise<void> {
     const { email, pass, passConfirm, name, surname } = createUserDto;
 
-    //Do passwords match?
+    // Do passwords match?
     if (pass !== passConfirm) {
       throw new ConflictException('Passwords do not match');
     } else {
-      //Hash
+      // Password Hash
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(pass, salt);
-
       const user = this.create({
         email,
         pass: hashedPassword,

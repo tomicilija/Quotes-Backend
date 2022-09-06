@@ -25,10 +25,10 @@ export class AuthService {
     const { email, pass } = loginUserDto;
     const user = await this.authRepository.findOne({ email });
 
-    //checks if there is user found and if password matches with one in database
+    // Checks if there is user found and if password matches with one in database
     if (user && (await bcrypt.compare(pass, user.pass))) {
       const payload: JwtPayload = { email };
-      const accessToken: string = await this.jwtService.sign(payload);
+      const accessToken: string = this.jwtService.sign(payload);
       return { accessToken };
     } else {
       throw new UnauthorizedException('Please check your login creentials');

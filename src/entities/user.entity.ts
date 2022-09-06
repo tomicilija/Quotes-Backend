@@ -8,8 +8,6 @@ import {
 import { Quote } from './quote.entity';
 import { Vote } from './vote.entity';
 
-// Database - Users table
-
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')

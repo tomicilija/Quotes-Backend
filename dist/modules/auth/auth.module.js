@@ -26,6 +26,7 @@ AuthModule = __decorate([
                 imports: [config_1.ConfigModule],
                 useFactory: async (configService) => ({
                     secret: configService.get('AUTH_SECRET'),
+                    signOptions: { expiresIn: 86400 },
                 }),
                 inject: [config_1.ConfigService],
             }),

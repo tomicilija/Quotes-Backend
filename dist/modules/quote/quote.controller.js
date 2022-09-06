@@ -68,7 +68,7 @@ __decorate([
     (0, common_1.Get)('myquote'),
     __param(0, (0, get_user_decorator_1.GetUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_entity_1.User]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], QuoteController.prototype, "getQuote", null);
 __decorate([
@@ -94,7 +94,7 @@ __decorate([
     (0, common_1.Delete)('myquote'),
     __param(0, (0, get_user_decorator_1.GetUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_entity_1.User]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], QuoteController.prototype, "deleteQuote", null);
 __decorate([
@@ -103,8 +103,7 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __param(1, (0, get_user_decorator_1.GetUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [createQuote_dto_1.CreateQuoteDto,
-        user_entity_1.User]),
+    __metadata("design:paramtypes", [createQuote_dto_1.CreateQuoteDto, String]),
     __metadata("design:returntype", Promise)
 ], QuoteController.prototype, "updateQuote", null);
 __decorate([

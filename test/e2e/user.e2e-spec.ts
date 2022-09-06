@@ -13,7 +13,6 @@ describe('UsersController (e2e)', () => {
   let app: INestApplication;
   let mod: TestingModule;
   let jwt: string;
-  let initialUserData: User;
 
   // before we run tests we add user to database
   beforeAll(async () => {
@@ -30,15 +29,14 @@ describe('UsersController (e2e)', () => {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash('Test123!', salt);
 
-    const userRepo = await getRepository(User);
-    let testUser = userRepo.create({
+    const userRepo = getRepository(User);
+    const testUser = userRepo.create({
       email: 'test@gmail.com',
       pass: hashedPassword,
       name: 'Test',
       surname: 'User',
     });
-    testUser = await userRepo.save(testUser);
-    initialUserData = testUser;
+    await userRepo.save(testUser);
   });
 
   // after all tests are run we delete all tables in database.  TODO --> change to delete only entred values  OR  Separate environment
@@ -76,6 +74,7 @@ describe('UsersController (e2e)', () => {
     const dto: CreateUserDto = {
       email: 'mock',
       pass: 'cock',
+      passConfirm: 'cock',
       name: 'Mock',
       surname: 'User',
     };
@@ -100,6 +99,7 @@ describe('UsersController (e2e)', () => {
     const dto: CreateUserDto = {
       email: 'mockuser@gmail.com',
       pass: 'Mock123!',
+      passConfirm: 'Mock123!',
       name: 'Mock',
       surname: 'User',
     };
@@ -137,6 +137,7 @@ describe('UsersController (e2e)', () => {
     const dto: CreateUserDto = {
       email: 'mockuser@gmail.com',
       pass: 'Update-Mock123!',
+      passConfirm: 'Update-Mock123!',
       name: 'MockU',
       surname: 'UserU',
     };

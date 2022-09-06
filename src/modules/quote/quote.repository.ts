@@ -6,25 +6,12 @@ import { CreateQuoteDto } from './dto/createQuote.dto';
 
 @EntityRepository(Quote)
 export class QuoteRepository extends Repository<Quote> {
-  // Gets my quote
-  async getQuote(user_id: User): Promise<Quote> {
+  // Gets quote
+  async getQuote(user_id: string): Promise<Quote> {
     const found = await this.findOne({ where: { user_id: user_id } });
-
     if (!found) {
       throw new NotFoundException(`Quote not found`);
     }
-
-    return found;
-  }
-
-  // Gets users quote
-  async getUsersQuote(user_id: string): Promise<Quote> {
-    const found = await this.findOne({ where: { user_id: user_id } });
-
-    if (!found) {
-      throw new NotFoundException(`Quote not found`);
-    }
-
     return found;
   }
 
@@ -42,7 +29,6 @@ export class QuoteRepository extends Repository<Quote> {
       user_id,
     });
     await this.save(quote);
-    //console.log(quote);
   }
 
   // Delete vote quote with
@@ -56,9 +42,9 @@ export class QuoteRepository extends Repository<Quote> {
   }
 
   // Delete quote with id
-  async deleteQuote(user_id: User): Promise<void> {
+  async deleteQuote(user_id: string): Promise<void> {
     const quote = await this.getQuote(user_id);
-    /// TODO Also delete all votes on quote with user_id
+    /// Delete all votes on quote with user_id
     this.deleteVote(quote.id);
     const result = await this.delete(quote);
     if (result.affected == 0) {
@@ -69,19 +55,20 @@ export class QuoteRepository extends Repository<Quote> {
   // Updates quote with qute text, karma = 0 and creation date and time of now
   async updateQuote(
     createQuoteDto: CreateQuoteDto,
-    user_id: User,
+    user_id: string,
   ): Promise<void> {
-    /// TODO Also delete all votes on quote with user_id
     const quote = await this.getQuote(user_id);
+    /// Delete all votes on quote with user_id
+    this.deleteVote(quote.id);
 
     if (!quote) {
       throw new NotFoundException(`Quote not found`);
     }
     const datetime = new Date();
-    (quote.text = createQuoteDto.text),
-      (quote.karma = 0),
-      (quote.creation_date = datetime),
-      await this.save(quote);
+    quote.text = createQuoteDto.text;
+    quote.karma = 0;
+    quote.creation_date = datetime;
+    await this.save(quote);
   }
 
   // Updates quote with qute text, karma = 0 and creation date and time of now

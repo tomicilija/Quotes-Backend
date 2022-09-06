@@ -1,8 +1,4 @@
-//Data Transfer Object - Expected shape of body
-
 import { IsEmail, IsNotEmpty, Matches, MinLength } from 'class-validator';
-
-// Validaton Doesnt Work  (allows empty spaces, week pasword..) ------------------------------------------ ! ! ! ! -------------
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -10,7 +6,9 @@ export class CreateUserDto {
   email: string;
 
   @IsNotEmpty()
-  @MinLength(8)
+  @MinLength(8, {
+    message: 'Password must be longer than or equal to 8 characters\n',
+  })
   // Passwords will contain at least 1 upper case letter
   // Passwords will contain at least 1 lower case letter
   // Passwords will contain at least 1 number or special character

@@ -15,7 +15,6 @@ describe('UsersController (e2e)', () => {
   let app: INestApplication;
   let mod: TestingModule;
   let jwt: string;
-  let initialQuoteData: Quote;
   let initialUserData: User;
 
   // before we run tests we add user to database
@@ -32,7 +31,7 @@ describe('UsersController (e2e)', () => {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash('Test123!', salt);
 
-    const userRepo = await getRepository(User);
+    const userRepo = getRepository(User);
     let testUser = userRepo.create({
       email: 'test1@gmail.com',
       pass: hashedPassword,
@@ -42,15 +41,14 @@ describe('UsersController (e2e)', () => {
     testUser = await userRepo.save(testUser);
     initialUserData = testUser;
 
-    const quoteRepo = await getRepository(Quote);
-    let testQuote = quoteRepo.create({
+    const quoteRepo = getRepository(Quote);
+    const testQuote = quoteRepo.create({
       text: 'Test quote',
       karma: 0,
       creation_date: new Date(),
       user_id: initialUserData,
     });
-    testQuote = await quoteRepo.save(testQuote);
-    initialQuoteData = testQuote;
+    await quoteRepo.save(testQuote);
   });
 
   // after all tests are run we delete all tables in database.  TODO --> change to delete only entred values  OR  Separate environment
@@ -75,6 +73,7 @@ describe('UsersController (e2e)', () => {
     const dto: CreateUserDto = {
       email: 'mockuser1@gmail.com',
       pass: 'Mock123!',
+      passConfirm: 'Mock123!',
       name: 'Mock',
       surname: 'User',
     };
@@ -98,7 +97,6 @@ describe('UsersController (e2e)', () => {
           accessToken: expect.any(String),
         });
         jwt = res.body.accessToken;
-        //console.log(jwt);
       });
   });
 

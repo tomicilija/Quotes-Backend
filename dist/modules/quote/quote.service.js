@@ -26,7 +26,7 @@ let QuoteService = class QuoteService {
         return this.quoteRepository.getQuote(user_id);
     }
     async getUsersQuote(user_id) {
-        return this.quoteRepository.getUsersQuote(user_id);
+        return this.quoteRepository.getQuote(user_id);
     }
     async createQuote(createQuoteDto, user_id) {
         return this.quoteRepository.createQuote(createQuoteDto, user_id);

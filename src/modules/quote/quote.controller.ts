@@ -26,7 +26,7 @@ export class QuoteController {
   // Gets my quote
   @UseGuards(AuthGuard())
   @Get('myquote')
-  getQuote(@GetUser() user_id: User): Promise<Quote> {
+  getQuote(@GetUser() user_id: string): Promise<Quote> {
     return this.quoteService.getQuote(user_id);
   }
 
@@ -50,7 +50,7 @@ export class QuoteController {
   // Delete quote
   @UseGuards(AuthGuard())
   @Delete('myquote')
-  deleteQuote(@GetUser() user: User): Promise<void> {
+  deleteQuote(@GetUser() user: string): Promise<void> {
     return this.quoteService.deleteQuote(user);
   }
 
@@ -59,7 +59,7 @@ export class QuoteController {
   @Patch('myquote')
   updateQuote(
     @Body() createQuoteDto: CreateQuoteDto,
-    @GetUser() user: User,
+    @GetUser() user: string,
   ): Promise<void> {
     return this.quoteService.updateQuote(createQuoteDto, user);
   }

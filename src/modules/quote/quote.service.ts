@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Quote } from '../../entities/quote.entity';
 import { User } from '../../entities/user.entity';
@@ -23,13 +18,13 @@ export class QuoteService {
   ) {}
 
   // Gets my quote
-  async getQuote(user_id: User): Promise<Quote> {
+  async getQuote(user_id: string): Promise<Quote> {
     return this.quoteRepository.getQuote(user_id);
   }
 
   // Gets users quote
   async getUsersQuote(user_id: string): Promise<Quote> {
-    return this.quoteRepository.getUsersQuote(user_id);
+    return this.quoteRepository.getQuote(user_id);
   }
 
   // Creates quote with qute text, karma = 0 and creation date and time of now
@@ -41,12 +36,12 @@ export class QuoteService {
   }
 
   // Delete quote with id
-  async deleteQuote(user_id: User): Promise<void> {
+  async deleteQuote(user_id: string): Promise<void> {
     this.quoteRepository.deleteQuote(user_id);
   }
 
   // Updates quote
-  updateQuote(createQuoteDto: CreateQuoteDto, user_id: User): Promise<void> {
+  updateQuote(createQuoteDto: CreateQuoteDto, user_id: string): Promise<void> {
     return this.quoteRepository.updateQuote(createQuoteDto, user_id);
   }
 

@@ -5,6 +5,9 @@ import {
   Delete,
   Patch,
   UseGuards,
+  Param,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from '../../entities/user.entity';
@@ -20,8 +23,8 @@ export class UserController {
 
   // Gets all of the users information with this specific id
   @Get()
-  getUserById(@GetUser() user_id: User): Promise<User> {
-    return this.userService.getUserById(user_id);
+  getUserById(@GetUser() user: User): Promise<User> {
+    return this.userService.getUserById(user.id);
   }
 
   // Delete user with id
@@ -32,18 +35,15 @@ export class UserController {
 
   // Updates all user information with that id and all info in body (email, pass, name and surname)
   @Patch('/update-password')
+  @UsePipes(ValidationPipe)
   updateUser(
     @GetUser() user_id: User,
     @Body() createUserDto: CreateUserDto,
   ): Promise<User> {
     return this.userService.updateUser(user_id, createUserDto);
   }
-
-  /* Doesn't work
-  // If we have any filter dedined, get all users with filter, otherwise get all users
-  @Get()
-  getUsers(@Query() filterDto: GetUsersFilterDto): Promise<User[]> {
-    return this.userService.getUsers(filterDto);
+  @Get('/:id')
+  getUserVotes(@Param('id') user_id: string): Promise<User> {
+    return this.userService.getUserById(user_id);
   }
-  */
 }

@@ -6,11 +6,11 @@ import { QuoteService } from './quote.service';
 export declare class QuoteController {
     private quoteService;
     constructor(quoteService: QuoteService);
-    getQuote(user_id: User): Promise<Quote>;
+    getQuote(user_id: string): Promise<Quote>;
     getUsersQuote(user_id: string): Promise<Quote>;
     createQuote(createQuoteDto: CreateQuoteDto, user: User): Promise<void>;
-    deleteQuote(user: User): Promise<void>;
-    updateQuote(createQuoteDto: CreateQuoteDto, user: User): Promise<void>;
+    deleteQuote(user: string): Promise<void>;
+    updateQuote(createQuoteDto: CreateQuoteDto, user: string): Promise<void>;
     voteStatusCheck(user_id: string, user: User): Promise<string>;
     upvoteQuote(user_id: string, user: User): Promise<void>;
     downvoteQuote(user_id: string, user: User): Promise<void>;

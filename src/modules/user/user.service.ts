@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../entities/user.entity';
 import { UserRepository } from './user.repository';
@@ -14,7 +14,7 @@ export class UserService {
   ) {}
 
   // Gets all of the users information with this specific id
-  async getUserById(user_id: User): Promise<User> {
+  async getUserById(user_id: string): Promise<User> {
     return this.userRepoitory.getUserById(user_id);
   }
 
@@ -27,11 +27,4 @@ export class UserService {
   updateUser(user_id: User, createUserDto: CreateUserDto): Promise<User> {
     return this.userRepoitory.updateUser(user_id, createUserDto);
   }
-
-  /* Doesn't work
-  // Get all users with filter, otherwise get all users
-  getUsers(filterDto: GetUsersFilterDto): Promise<User[]> {
-    return this.userRepoitory.getUsers(filterDto);
-  }
-  */
 }

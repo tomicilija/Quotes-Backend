@@ -31,7 +31,7 @@ let AuthService = class AuthService {
         const user = await this.authRepository.findOne({ email });
         if (user && (await bcrypt.compare(pass, user.pass))) {
             const payload = { email };
-            const accessToken = await this.jwtService.sign(payload);
+            const accessToken = this.jwtService.sign(payload);
             return { accessToken };
         }
         else {

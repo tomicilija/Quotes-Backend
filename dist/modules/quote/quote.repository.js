@@ -18,13 +18,6 @@ let QuoteRepository = class QuoteRepository extends typeorm_1.Repository {
         }
         return found;
     }
-    async getUsersQuote(user_id) {
-        const found = await this.findOne({ where: { user_id: user_id } });
-        if (!found) {
-            throw new common_1.NotFoundException(`Quote not found`);
-        }
-        return found;
-    }
     async createQuote(createQuoteDto, user_id) {
         const { text } = createQuoteDto;
         const datetime = new Date();
@@ -54,14 +47,15 @@ let QuoteRepository = class QuoteRepository extends typeorm_1.Repository {
     }
     async updateQuote(createQuoteDto, user_id) {
         const quote = await this.getQuote(user_id);
+        this.deleteVote(quote.id);
         if (!quote) {
             throw new common_1.NotFoundException(`Quote not found`);
         }
         const datetime = new Date();
-        (quote.text = createQuoteDto.text),
-            (quote.karma = 0),
-            (quote.creation_date = datetime),
-            await this.save(quote);
+        quote.text = createQuoteDto.text;
+        quote.karma = 0;
+        quote.creation_date = datetime;
+        await this.save(quote);
     }
     async updateQuoteKarma(status, user_id) {
         const quote = await this.findOne({ where: { user_id: user_id } });

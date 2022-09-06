@@ -23,14 +23,17 @@ let UserController = class UserController {
     constructor(userService) {
         this.userService = userService;
     }
-    getUserById(user_id) {
-        return this.userService.getUserById(user_id);
+    getUserById(user) {
+        return this.userService.getUserById(user.id);
     }
     deleteUser(user_id) {
         return this.userService.deleteUser(user_id);
     }
     updateUser(user_id, createUserDto) {
         return this.userService.updateUser(user_id, createUserDto);
+    }
+    getUserVotes(user_id) {
+        return this.userService.getUserById(user_id);
     }
 };
 __decorate([
@@ -49,6 +52,7 @@ __decorate([
 ], UserController.prototype, "deleteUser", null);
 __decorate([
     (0, common_1.Patch)('/update-password'),
+    (0, common_1.UsePipes)(common_1.ValidationPipe),
     __param(0, (0, get_user_decorator_1.GetUser)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -56,6 +60,13 @@ __decorate([
         createUser_dto_1.CreateUserDto]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "updateUser", null);
+__decorate([
+    (0, common_1.Get)('/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getUserVotes", null);
 UserController = __decorate([
     (0, common_1.Controller)('me'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
