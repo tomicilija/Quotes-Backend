@@ -41,11 +41,11 @@ export class UserRepository extends Repository<User> {
       throw new ConflictException(`User wth this email already exists! \n`);
     }
 
-    //Do passwords match?
+    // Do passwords match?
     if (pass !== passConfirm) {
       throw new ConflictException('Passwords do not match');
     } else {
-      //Hash
+      // Hash
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(createUserDto.pass, salt);
 
